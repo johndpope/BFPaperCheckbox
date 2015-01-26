@@ -31,8 +31,8 @@
 #import <Quartz/Quartz.h>
 #import "NSView+Center.h"
 #import "SKColor+BFPaperColors.h"
+#import "BackgroundView.h"
 #import "NSView+NSViewAnimationWithBlocks.h"
-#import <XUIKit/XUIKit.h>
 
 @interface BFPaperCheckbox()
 @property CGPoint centerPoint;
@@ -150,13 +150,13 @@ static NSString *const mark_eraseLongLine = @"largeCheckmarkLine2";
     self.rippleFromTapLocation = YES;
     self.tapCirclePositiveColor = nil;
     self.tapCircleNegativeColor = nil;
-    self.checkmarkColor =  [SKColor paperColorAmber];;
+    self.checkmarkColor = IOS7BLUE;
     self.tintColor = [SKColor paperColorGray700];
     self.layer.masksToBounds = YES;
     //  self.clipsToBounds = YES;
     self.layer.shadowOpacity = 0.f;
     self.layer.cornerRadius = self.radius;
-    // self.backgroundColor = [SKColor clearColor];
+    // self.backgroundColor = [UIColor clearColor];
     
     self.rippleAnimationQueue = [NSMutableArray array];
     self.deathRowForCircleLayers = [NSMutableArray array];
@@ -169,7 +169,7 @@ static NSString *const mark_eraseLongLine = @"largeCheckmarkLine2";
     
     [@[ self.lineLeft, self.lineTop, self.lineRight, self.lineBottom ] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         CAShapeLayer *layer = obj;
-        layer.fillColor = [SKColor clearColor].CGColor;
+        layer.fillColor = [UIColor clearColor].CGColor;
         layer.anchorPoint = CGPointMake(0.0, 0.0);
         layer.lineJoin = kCALineJoinRound;
         layer.lineCap = kCALineCapSquare;
@@ -205,6 +205,16 @@ static NSString *const mark_eraseLongLine = @"largeCheckmarkLine2";
 }
 
 
+#pragma mark - Gesture Recognizer Delegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    
+    CGPoint location = [touch locationInView:self];
+    //NSLog(@"location: x = %0.2f, y = %0.2f", location.x, location.y);
+    
+    self.tapPoint = location;
+    
+    return NO;  // Disallow recognition of tap gestures. We just needed this to grab that tasty tap location.
+}
 
 
 #pragma mark - IBAction/Callback Handlers
@@ -325,19 +335,19 @@ static NSString *const mark_eraseLongLine = @"largeCheckmarkLine2";
     startingRectSizerView.center = tapCircleLayerSizerView.center;
     
     // Create starting circle path:
-    SKBezierPath *startingCirclePath = [SKBezierPath bezierPathWithRoundedRect:startingRectSizerView.frame cornerRadius:bfPaperCheckbox_tapCircleDiameterStartValue / 2.f];
+    UIBezierPath *startingCirclePath = [UIBezierPath bezierPathWithRoundedRect:startingRectSizerView.frame cornerRadius:bfPaperCheckbox_tapCircleDiameterStartValue / 2.f];
     
     // Calculate ending path:
     SKView *endingRectSizerView = [[SKView alloc] initWithFrame:CGRectMake(0, 0, tapCircleDiameterEndValue, tapCircleDiameterEndValue)];
     endingRectSizerView.center = tapCircleLayerSizerView.center;
     
     // Create ending circle path:
-    SKBezierPath *endingCirclePath = [SKBezierPath bezierPathWithRoundedRect:endingRectSizerView.frame cornerRadius:tapCircleDiameterEndValue / 2.f];
+    UIBezierPath *endingCirclePath = [UIBezierPath bezierPathWithRoundedRect:endingRectSizerView.frame cornerRadius:tapCircleDiameterEndValue / 2.f];
     
     // Create tap circle:
     CAShapeLayer *tapCircle = [CAShapeLayer layer];
-    tapCircle.strokeColor = [SKColor clearColor].CGColor;
-    tapCircle.borderColor = [SKColor clearColor].CGColor;
+    tapCircle.strokeColor = [UIColor clearColor].CGColor;
+    tapCircle.borderColor = [UIColor clearColor].CGColor;
     tapCircle.borderWidth = 0;
     tapCircle.path = startingCirclePath.CGPath;
     // Set tap circle layer's background color:
@@ -622,7 +632,7 @@ static NSString *const mark_eraseLongLine = @"largeCheckmarkLine2";
 {
     // Red dot for debugging
     /*CALayer *redDot = [[CALayer alloc] init];
-     redDot.backgroundColor = [SKColor redColor].CGColor;
+     redDot.backgroundColor = [UIColor redColor].CGColor;
      redDot.frame = CGRectMake(CGRectGetMidX(self.bounds) - 3, CGRectGetMidY(self.bounds) + 11, 1, 1);
      [self.layer addSublayer:redDot];*/
     
